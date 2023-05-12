@@ -86,6 +86,91 @@ You can also call `.warn()` on your deprecation classes to warn about
 deprecated code at any time.
 
 
+#### `@deprecate_non_keyword_only_args`
+
+This decorator can help convert positional arguments to keyword-only arguments:
+
+```python
+from housekeeping import deprecate_non_keyword_only_args
+
+
+@deprecate_non_keyword_only_args(RemovedInMyProject20Warning)
+def add_abc(a, *, b, c=1):
+    return a + b + c
+
+
+add_abc(1, 2, 3)      # This will emit a deprecation warning.
+add_abc(1, b=2, c=3)  # This will not.
+````
+
+
+#### `@func_deprecated`
+
+This decorator marks a function as deprecated, or pending deprecation:
+
+```python
+from housekeeping import func_deprecated
+
+
+@func_deprecated(RemovedInMyProject20Warning)
+def my_func():
+    ...
+
+
+my_func()  # This will emit a deprecation warning.
+```
+
+
+#### `@func_moved`
+
+This decorator marks a function as having moved elsewhere.
+
+```python
+from housekeeping import func_moved
+
+from myproject.new_module import my_func as new_my_func
+
+
+# This can be invoked with some special behavior:
+@func_moved(RemovedInMyProject20Warning,
+            new_func=new_my_func)
+def my_func(a, b):
+    new_my_func(a, b, True)
+
+
+my_func()  # This will emit a deprecation warning.
+```
+
+
+#### `deprecated_arg_value`
+
+This wraps values that, when accessed, emit a deprecation or pending
+deprecation warning. It's useful for passing legacy data to callback handlers.
+
+```python
+from housekeeping import deprecated_arg_value
+
+
+def callback_handler(username=None, user=None):
+    user = get_user(username)  # This will emit a deprecation warning.
+    user = get_user(user)      # This would not.
+
+
+class User:
+    ...
+
+    def emit_did_thing(self):
+        callback_handler(
+            user=self,
+            username=deprecated_arg_value(
+                RemovedInMyProject20Warning,
+                owner_name='User',
+                value=self.username,
+                old_name='username',
+                new_name='user'))
+```
+
+
 Our Other Projects
 ------------------
 
