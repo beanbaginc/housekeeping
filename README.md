@@ -232,6 +232,40 @@ class MyGrandChildClass(MyChildClass):
 ```
 
 
+#### Deprecating Modules
+
+##### ``module_deprecated``
+
+This function can be called within a module body to emit a warning when the
+module is imported.
+
+```python
+from housekeeping import module_deprecated
+
+from myproject.deprecation import RemovedInMyProject20Warning
+
+
+module_deprecated(RemovedInMyProject20Warning, __name__)
+```
+
+
+##### ``module_moved``
+
+This function can be called within a module body to emit a warning when the
+module is imported, pointing the consumer to a replacement module. This is
+useful when reorganizing the codebase and moving modules around.
+
+```python
+from housekeeping import module_moved
+
+from myproject.deprecation import RemovedInMyProject20Warning
+from myproject import newmodule
+
+
+module_moved(RemovedInMyProject20Warning, __name__, newmodule.__name__)
+```
+
+
 Our Other Projects
 ------------------
 

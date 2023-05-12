@@ -18,6 +18,8 @@ The following deprecation helpers and classes are available:
    ~housekeeping.functions.deprecated_arg_value
    ~housekeeping.functions.func_deprecated
    ~housekeeping.functions.func_moved
+   ~housekeeping.modules.module_deprecated
+   ~housekeeping.modules.module_moved
 """
 
 from housekeeping.base import (BaseDeprecationWarningMixin,
@@ -30,6 +32,8 @@ from housekeeping.functions import (deprecate_non_keyword_only_args,
                                     deprecated_arg_value,
                                     func_deprecated,
                                     func_moved)
+from housekeeping.modules import (module_deprecated,
+                                  module_moved)
 
 
 __all__ = [
@@ -43,4 +47,6 @@ __all__ = [
     'deprecated_arg_value',
     'func_deprecated',
     'func_moved',
+    'module_deprecated',
+    'module_moved',
 ]
