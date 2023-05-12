@@ -86,7 +86,9 @@ You can also call `.warn()` on your deprecation classes to warn about
 deprecated code at any time.
 
 
-#### `@deprecate_non_keyword_only_args`
+#### Deprecating Functions
+
+##### `@deprecate_non_keyword_only_args`
 
 This decorator can help convert positional arguments to keyword-only arguments:
 
@@ -104,7 +106,7 @@ add_abc(1, b=2, c=3)  # This will not.
 ````
 
 
-#### `@func_deprecated`
+##### `@func_deprecated`
 
 This decorator marks a function as deprecated, or pending deprecation:
 
@@ -121,7 +123,7 @@ my_func()  # This will emit a deprecation warning.
 ```
 
 
-#### `@func_moved`
+##### `@func_moved`
 
 This decorator marks a function as having moved elsewhere.
 
@@ -142,7 +144,7 @@ my_func()  # This will emit a deprecation warning.
 ```
 
 
-#### `deprecated_arg_value`
+##### `deprecated_arg_value`
 
 This wraps values that, when accessed, emit a deprecation or pending
 deprecation warning. It's useful for passing legacy data to callback handlers.
@@ -168,6 +170,65 @@ class User:
                 value=self.username,
                 old_name='username',
                 new_name='user'))
+```
+
+#### Deprecating Classes
+
+#### `ClassDeprecatedMixin`
+
+This class mixin will emit warnings when you either instantiate or subclass
+the class.
+
+```python
+from housekeeping import ClassDeprecatedMixin
+
+
+class MyOldClass(ClassDeprecatedMixin,
+                 warning_cls=RemovedInMyProject20Warning):
+    pass
+
+# This will emit a deprecation warning.
+MyOldClass()
+
+# So will this.
+class MyChildClass(OldBaseClass):
+    pass
+
+# But this will not.
+MyChildClass()
+
+# Nor will this.
+class MyGrandChildClass(MyChildClass):
+    pass
+```
+
+
+#### `ClassMovedMixin`
+
+This class mixin will emit warnings when you either instantiate or subclass
+the class, pointing you to a replacement class or import.
+
+```python
+from housekeeping import ClassDeprecatedMixin
+
+
+class MyOldClass(ClassMovedMixin, MyNewBaseClass,
+                 warning_cls=RemovedInMyProject20Warning):
+    pass
+
+# This will emit a deprecation warning.
+MyOldClass()
+
+# So will this.
+class MyChildClass(MyOldClass):
+    pass
+
+# But this will not.
+MyChildClass()
+
+# Nor will this.
+class MyGrandChildClass(MyChildClass):
+    pass
 ```
 
 

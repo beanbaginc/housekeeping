@@ -12,6 +12,8 @@ The following deprecation helpers and classes are available:
    ~housekeeping.base.BasePendingRemovalWarning
    ~housekeeping.base.BaseRemovedInWarning
    ~housekeeping.base.DeprecationWarningType
+   ~housekeeping.classes.ClassDeprecatedMixin
+   ~housekeeping.classes.ClassMovedMixin
    ~housekeeping.functions.deprecate_non_keyword_only_args
    ~housekeeping.functions.deprecated_arg_value
    ~housekeeping.functions.func_deprecated
@@ -22,6 +24,8 @@ from housekeeping.base import (BaseDeprecationWarningMixin,
                                BasePendingRemovalWarning,
                                BaseRemovedInWarning,
                                DeprecationWarningType)
+from housekeeping.classes import (ClassDeprecatedMixin,
+                                  ClassMovedMixin)
 from housekeeping.functions import (deprecate_non_keyword_only_args,
                                     deprecated_arg_value,
                                     func_deprecated,
@@ -32,6 +36,8 @@ __all__ = [
     'BaseDeprecationWarningMixin',
     'BasePendingRemovalWarning',
     'BaseRemovedInWarning',
+    'ClassDeprecatedMixin',
+    'ClassMovedMixin',
     'DeprecationWarningType',
     'deprecate_non_keyword_only_args',
     'deprecated_arg_value',
