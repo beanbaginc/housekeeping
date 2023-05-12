@@ -1,13 +1,17 @@
+[build-system]
+requires = ['setuptools']
+build-backend = 'setuptools.build_meta'
+
 [project]
 name = 'housekeeping'
-version = '1.0.0'
 description = 'Python utilities for helping deprecate and remove code.'
 authors = [
-    {name='Beanbag, Inc.', email='questions@beanbaginc.com'},
+    {name = 'Beanbag, Inc.', email = 'questions@beanbaginc.com'},
 ]
-license = { text='MIT' }
+license = { text = 'MIT' }
 readme = 'README.md'
 requires-python = '>=3.7'
+dynamic =  ['version']
 
 dependencies = [
     'typing_extensions>=4.4',
@@ -42,3 +46,11 @@ classifiers = [
 homepage = 'https://github.com/beanbaginc/housekeeping'
 documentation = 'https://github.com/beanbaginc/housekeeping'
 repository = 'https://github.com/beanbaginc/housekeeping'
+
+
+[tool.setuptools.package-data]
+housekeeping = ['py.typed']
+
+
+[tool.setuptools.dynamic]
+version = { attr = 'housekeeping._version.get_package_version' }

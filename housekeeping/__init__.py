@@ -22,6 +22,12 @@ The following deprecation helpers and classes are available:
    ~housekeeping.modules.module_moved
 """
 
+from housekeeping._version import (VERSION,
+                                   __version__,
+                                   __version_info__,
+                                   get_package_version,
+                                   get_version_string,
+                                   is_release)
 from housekeeping.base import (BaseDeprecationWarningMixin,
                                BasePendingRemovalWarning,
                                BaseRemovedInWarning,
@@ -43,10 +49,16 @@ __all__ = [
     'ClassDeprecatedMixin',
     'ClassMovedMixin',
     'DeprecationWarningType',
+    'VERSION',
+    '__version__',
+    '__version_info__',
     'deprecate_non_keyword_only_args',
     'deprecated_arg_value',
     'func_deprecated',
     'func_moved',
+    'get_package_version',
+    'get_version_string',
+    'is_release',
     'module_deprecated',
     'module_moved',
 ]
