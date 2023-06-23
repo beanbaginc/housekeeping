@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from typing import Optional
 
-from housekeeping.base import DEFAULT_STACK_LEVEL, DeprecationWarningType
+from housekeeping.base import (DEFAULT_STACK_LEVEL,
+                               DeprecationWarningTypeOrCallable)
 from housekeeping.helpers import emit_warning
 
 
 def module_deprecated(
-    warning_cls: DeprecationWarningType,
+    warning_cls: DeprecationWarningTypeOrCallable,
     module_name: str,
     *,
     message: Optional[str] = None,
@@ -32,7 +33,14 @@ def module_deprecated(
 
     Args:
         warning_cls (type, optional):
-            The type of warning class to use.
+            The type of warning class to use, or a callable returning one.
+
+            A callable can be used to avoid circular references.
+
+            Version Changed:
+                1.1:
+                This can now be either a warning class or a function
+                that returns one.
 
         module_name (str):
             The name of the deprecated module.
@@ -62,7 +70,7 @@ def module_deprecated(
 
 
 def module_moved(
-    warning_cls: DeprecationWarningType,
+    warning_cls: DeprecationWarningTypeOrCallable,
     old_module_name: str,
     new_module_name: str,
     *,
@@ -86,7 +94,14 @@ def module_moved(
 
     Args:
         warning_cls (type, optional):
-            The type of warning class to use.
+            The type of warning class to use, or a callable returning one.
+
+            A callable can be used to avoid circular references.
+
+            Version Changed:
+                1.1:
+                This can now be either a warning class or a function
+                that returns one.
 
         old_module_name (str):
             The name of the deprecated module.

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import Type, TYPE_CHECKING
+from typing import Callable, Type, TYPE_CHECKING, Union
 
 from typing_extensions import TypeAlias
 
@@ -97,3 +97,13 @@ class BasePendingRemovalWarning(BaseDeprecationWarningMixin,
 
 #: An alias for representing a BaseDeprecationWarningMixin subclass.
 DeprecationWarningType: TypeAlias = Type[BaseDeprecationWarningMixin]
+
+
+#: An alias for a DeprecationWarningType or a callable returning one.
+#:
+#: Version Added:
+#:     1.1
+DeprecationWarningTypeOrCallable: TypeAlias = Union[
+    DeprecationWarningType,
+    Callable[[], DeprecationWarningType],
+]

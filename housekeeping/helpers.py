@@ -7,9 +7,11 @@ from __future__ import annotations
 
 import inspect
 import operator
+from types import FunctionType
 from typing import Any, Callable, Generic, Type, TypeVar, Union, cast
 
-from housekeeping.base import DEFAULT_STACK_LEVEL, DeprecationWarningType
+from housekeeping.base import (DEFAULT_STACK_LEVEL,
+                               DeprecationWarningTypeOrCallable)
 
 
 _T = TypeVar('_T')
@@ -189,7 +191,7 @@ def format_display_name(
 
 
 def emit_warning(
-    warning_cls: DeprecationWarningType,
+    warning_cls: DeprecationWarningTypeOrCallable,
     *,
     deprecation_msg: str,
     pending_deprecation_msg: str,
@@ -203,7 +205,7 @@ def emit_warning(
     class.
 
     Args:
-        warning_cls (type):
+        warning_cls (type or callable):
             The deprecation warning class.
 
         deprecation_msg (str):
@@ -222,6 +224,13 @@ def emit_warning(
             :py:meth:`~housekeeping.base.BaseDeprecationWarningMixin.warn`.
     """
     message: str
+
+    if isinstance(warning_cls, FunctionType):
+        warning_cls = warning_cls()
+
+    if not inspect.isclass(warning_cls):
+        raise TypeError('Expected a deprecation warning class for %r'
+                        % warning_cls)
 
     if issubclass(warning_cls, DeprecationWarning):
         message = deprecation_msg

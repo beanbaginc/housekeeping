@@ -45,6 +45,25 @@ class ClassDeprecatedMixinTests(TestCase):
             class MySubclass(MyOldClass):
                 pass
 
+    def test_subclass_with_warning_cls_callable(self) -> None:
+        """Testing ClassDeprecatedMixin subclassing with warning_cls as
+        callable
+        """
+        class MyOldClass(ClassDeprecatedMixin,
+                         warning_cls=lambda: MyRemovedInWarning):
+            pass
+
+        prefix = self.locals_prefix
+        message = (
+            f'`{prefix}.MySubclass` subclasses `{prefix}.MyOldClass`, which '
+            f'is deprecated and will be removed in My Product 1.0.'
+        )
+        line = 'class MySubclass(MyOldClass):'
+
+        with self.assertWarning(MyRemovedInWarning, message, line):
+            class MySubclass(MyOldClass):
+                pass
+
     def test_subclass_with_deprecation_msg(self) -> None:
         """Testing ClassDeprecatedMixin subclassing with deprecation and
         subclass_deprecation_msg=
@@ -197,6 +216,27 @@ class ClassMovedMixinTests(TestCase):
 
         class MyOldClass(ClassMovedMixin, MyNewClass,
                          warning_cls=MyPendingRemovalWarning):
+            pass
+
+        prefix = self.locals_prefix
+        message = (
+            f'`{prefix}.MySubclass` subclasses `{prefix}.MyOldClass`, which '
+            f'is scheduled to be deprecated in a future version of My '
+            f'Product. To prepare, subclass `{prefix}.MyNewClass` instead.'
+        )
+        line = 'class MySubclass(MyOldClass):'
+
+        with self.assertWarning(MyPendingRemovalWarning, message, line):
+            class MySubclass(MyOldClass):
+                pass
+
+    def test_subclass_with_warning_cls_callable(self) -> None:
+        """Testing ClassMovedMixin subclassing with warning_cls as callable"""
+        class MyNewClass:
+            pass
+
+        class MyOldClass(ClassMovedMixin, MyNewClass,
+                         warning_cls=lambda: MyPendingRemovalWarning):
             pass
 
         prefix = self.locals_prefix

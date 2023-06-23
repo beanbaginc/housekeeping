@@ -33,6 +33,25 @@ class DeprecatedArgValueTests(TestCase):
 
         self.assertEqual(result, 124)
 
+    def test_with_warning_cls_as_callable(self) -> None:
+        """Testing deprecated_arg_value with warning_cls as callable"""
+        value = deprecated_arg_value(
+            lambda: MyRemovedInWarning,
+            owner_name='my_func()',
+            value=123,
+            old_name='old_arg')
+
+        message = (
+            '`old_arg` for `my_func()` has been deprecated and will be '
+            'removed in My Product 1.0.'
+        )
+        line = 'result = 1 + value'
+
+        with self.assertWarning(MyRemovedInWarning, message, line):
+            result = 1 + value
+
+        self.assertEqual(result, 124)
+
 
 class DeprecateNonKeywordOnlyArgsTests(TestCase):
     """Unit tests for @deprecate_non_keyword_only_args."""
@@ -172,6 +191,27 @@ class DeprecateNonKeywordOnlyArgsTests(TestCase):
 
         self.assertEqual(result, 6)
 
+    def test_with_warning_cls_callable(self) -> None:
+        """Testing @deprecate_non_keyword_only_args with warning_cls as
+        callable
+        """
+        @deprecate_non_keyword_only_args(lambda: MyRemovedInWarning)
+        def my_func(a, *, b, c=1):
+            return a + b + c
+
+        prefix = self.locals_prefix
+        message = (
+            f'Positional argument `b` must be passed as a keyword argument '
+            f'when calling `{prefix}.my_func()`. Passing as a positional '
+            f'argument will be required in My Product 1.0.'
+        )
+        line = 'result = my_func(1, 2, c=3)  # type: ignore'
+
+        with self.assertWarning(MyRemovedInWarning, message, line):
+            result = my_func(1, 2, c=3)  # type: ignore
+
+        self.assertEqual(result, 6)
+
 
 class FuncDeprecatedTests(TestCase):
     """Unit tests for func_deprecated."""
@@ -258,6 +298,24 @@ class FuncDeprecatedTests(TestCase):
         line = 'result = my_func(1, 2)'
 
         with self.assertWarning(MyPendingRemovalWarning, message, line):
+            result = my_func(1, 2)
+
+        self.assertEqual(result, 3)
+
+    def test_with_warning_cls_callable(self) -> None:
+        """Testing @func_deprecated with warning_cls as callable"""
+        @func_deprecated(lambda: MyRemovedInWarning)
+        def my_func(a, b):
+            return a + b
+
+        prefix = self.locals_prefix
+        message = (
+            f'`{prefix}.my_func()` is deprecated and will be removed in My '
+            f'Product 1.0.'
+        )
+        line = 'result = my_func(1, 2)'
+
+        with self.assertWarning(MyRemovedInWarning, message, line):
             result = my_func(1, 2)
 
         self.assertEqual(result, 3)
@@ -398,6 +456,25 @@ class FuncMovedTests(TestCase):
         line = 'result = my_func(1, 2)'
 
         with self.assertWarning(MyPendingRemovalWarning, message, line):
+            result = my_func(1, 2)
+
+        self.assertEqual(result, 3)
+
+    def test_with_warning_cls_callable(self) -> None:
+        """Testing @func_moved with warning_cls as callable"""
+        @func_moved(lambda: MyRemovedInWarning,
+                    'my_new_func')
+        def my_func(a, b):
+            return a + b
+
+        prefix = self.locals_prefix
+        message = (
+            f'`{prefix}.my_func()` has moved to `my_new_func()`. The old '
+            f'function is deprecated and will be removed in My Product 1.0.'
+        )
+        line = 'result = my_func(1, 2)'
+
+        with self.assertWarning(MyRemovedInWarning, message, line):
             result = my_func(1, 2)
 
         self.assertEqual(result, 3)

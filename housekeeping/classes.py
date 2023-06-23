@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Optional, Type
 
-from housekeeping.base import DeprecationWarningType
+from housekeeping.base import DeprecationWarningTypeOrCallable
 from housekeeping.helpers import emit_warning, format_display_name
 
 
@@ -88,14 +88,15 @@ class ClassDeprecatedMixin:
     _housekeeping_base_cls: Optional[Type] = None
     _housekeeping_subclass_deprecation_msg: Optional[str] = None
     _housekeeping_init_deprecation_msg: Optional[str] = None
-    _housekeeping_warning_cls: Optional[DeprecationWarningType] = None
+    _housekeeping_warning_cls: Optional[DeprecationWarningTypeOrCallable] = \
+        None
 
     def __init_subclass__(
         cls,
         *,
         init_deprecation_msg: Optional[str] = None,
         subclass_deprecation_msg: Optional[str] = None,
-        warning_cls: Optional[DeprecationWarningType] = None,
+        warning_cls: Optional[DeprecationWarningTypeOrCallable] = None,
         **kwargs,
     ) -> None:
         """Initialize a subclass.
@@ -112,11 +113,18 @@ class ClassDeprecatedMixin:
                 A custom deprecation message to use when subclassing the
                 class directly.
 
-            warning_cls (type, optional):
-                The type of warning class to use.
+            warning_cls (type or callable, optional):
+                The type of warning class to use, or a callable returning one.
 
                 This must be provided for the class using this mixin. It
                 will be ignored for subclasses.
+
+                A callable can be used to avoid circular references.
+
+                Version Changed:
+                    1.1:
+                    This can now be either a warning class or a function
+                    that returns one.
 
             **kwargs (dict):
                 Additional keyword arguments to pass to the parent.
@@ -146,7 +154,8 @@ class ClassDeprecatedMixin:
 
             message = cls._housekeeping_subclass_deprecation_msg
 
-            if cls._housekeeping_base_cls in cls.__bases__:
+            if (cls._housekeeping_base_cls in cls.__bases__ and
+                not getattr(cls, 'housekeeping_skip_warning', False)):
                 emit_warning(
                     warning_cls,
                     deprecation_msg=message or (
@@ -275,7 +284,8 @@ class ClassMovedMixin:
     _housekeeping_init_deprecation_msg: Optional[str] = None
     _housekeeping_new_base_cls: Optional[Type] = None
     _housekeeping_subclass_deprecation_msg: Optional[str] = None
-    _housekeeping_warning_cls: Optional[DeprecationWarningType] = None
+    _housekeeping_warning_cls: Optional[DeprecationWarningTypeOrCallable] = \
+        None
 
     def __init_subclass__(
         cls,
@@ -283,7 +293,7 @@ class ClassMovedMixin:
         init_deprecation_msg: Optional[str] = None,
         subclass_deprecation_msg: Optional[str] = None,
         new_base_cls: Optional[Type] = None,
-        warning_cls: Optional[DeprecationWarningType] = None,
+        warning_cls: Optional[DeprecationWarningTypeOrCallable] = None,
         **kwargs,
     ) -> None:
         """Initialize a subclass.
@@ -300,11 +310,18 @@ class ClassMovedMixin:
                 A custom deprecation message to use when subclassing the
                 class directly.
 
-            warning_cls (type, optional):
-                The type of warning class to use.
+            warning_cls (type or callable, optional):
+                The type of warning class to use, or a callable returning one.
 
                 This must be provided for the class using this mixin. It
                 will be ignored for subclasses.
+
+                A callable can be used to avoid circular references.
+
+                Version Changed:
+                    1.1:
+                    This can now be either a warning class or a function
+                    that returns one.
 
             **kwargs (dict):
                 Additional keyword arguments to pass to the parent.
@@ -337,7 +354,8 @@ class ClassMovedMixin:
 
             message = cls._housekeeping_subclass_deprecation_msg
 
-            if cls._housekeeping_base_cls in cls.__bases__:
+            if (cls._housekeeping_base_cls in cls.__bases__ and
+                not getattr(cls, 'housekeeping_skip_warning', False)):
                 emit_warning(
                     warning_cls,
                     deprecation_msg=message or (

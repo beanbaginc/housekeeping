@@ -7,7 +7,8 @@ from functools import wraps
 from typing import (Any, Callable, Dict, List, Optional, Tuple, TypeVar,
                     Union, cast)
 
-from housekeeping.base import DEFAULT_STACK_LEVEL, DeprecationWarningType
+from housekeeping.base import (DEFAULT_STACK_LEVEL,
+                               DeprecationWarningTypeOrCallable)
 from housekeeping.helpers import LazyObject, emit_warning, format_display_name
 
 
@@ -16,7 +17,7 @@ _ValueT = TypeVar('_ValueT')
 
 
 def deprecated_arg_value(
-    warning_cls: DeprecationWarningType,
+    warning_cls: DeprecationWarningTypeOrCallable,
     *,
     owner_name: str,
     value: _ValueT,
@@ -46,8 +47,15 @@ def deprecated_arg_value(
     Custom messages can also be provided.
 
     Args:
-        warning_cls (type, optional):
-            The class to use for the warning.
+        warning_cls (type or callable):
+            The type of warning class to use, or a callable returning one.
+
+            A callable can be used to avoid circular references.
+
+            Version Changed:
+                1.1:
+                This can now be either a warning class or a function
+                that returns one.
 
         owner_name (str):
             The name of the owner of this argument.
@@ -136,7 +144,7 @@ def deprecated_arg_value(
 
 
 def deprecate_non_keyword_only_args(
-    warning_cls: DeprecationWarningType,
+    warning_cls: DeprecationWarningTypeOrCallable,
     *,
     message: Optional[str] = None,
     stacklevel: int = DEFAULT_STACK_LEVEL,
@@ -167,9 +175,15 @@ def deprecate_non_keyword_only_args(
     Custom messages can also be provided.
 
     Args:
-        warning_cls (type):
-            The specific deprecation warning class to use. This must be a
-            subclass of :py:exc:`DeprecationWarning`.
+        warning_cls (type or callable):
+            The type of warning class to use, or a callable returning one.
+
+            A callable can be used to avoid circular references.
+
+            Version Changed:
+                1.1:
+                This can now be either a warning class or a function
+                that returns one.
 
         message (str, optional):
             An optional message to use instead of the default.
@@ -402,7 +416,7 @@ def deprecate_non_keyword_only_args(
 
 
 def func_deprecated(
-    warning_cls: DeprecationWarningType,
+    warning_cls: DeprecationWarningTypeOrCallable,
     *,
     message: Optional[str] = None,
     stacklevel: int = DEFAULT_STACK_LEVEL,
@@ -424,8 +438,15 @@ def func_deprecated(
     Custom messages can also be provided.
 
     Args:
-        warning_cls (type):
-            The deprecation warning class to emit.
+        warning_cls (type or callable):
+            The type of warning class to use, or a callable returning one.
+
+            A callable can be used to avoid circular references.
+
+            Version Changed:
+                1.1:
+                This can now be either a warning class or a function
+                that returns one.
 
         message (str, optional):
             A custom message to display for the deprecation message.
@@ -477,7 +498,7 @@ def func_deprecated(
 
 
 def func_moved(
-    warning_cls: DeprecationWarningType,
+    warning_cls: DeprecationWarningTypeOrCallable,
     new_func: Union[str, Callable],
     *,
     message: Optional[str] = None,
@@ -501,8 +522,15 @@ def func_moved(
     Custom messages can also be provided.
 
     Args:
-        warning_cls (type):
-            The deprecation warning class to emit.
+        warning_cls (type or callable):
+            The type of warning class to use, or a callable returning one.
+
+            A callable can be used to avoid circular references.
+
+            Version Changed:
+                1.1:
+                This can now be either a warning class or a function
+                that returns one.
 
         new_func (str):
             The new function, or a descriptive string referencing the new

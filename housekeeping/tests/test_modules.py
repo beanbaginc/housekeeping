@@ -58,6 +58,20 @@ class ModuleDeprecatedTests(TestCase):
                                 '_import_module()'):
             _import_module()
 
+    def test_with_warning_cls_callable(self) -> None:
+        """Testing module_deprecated and warning_cls as callable"""
+        def _import_module():
+            module_deprecated(lambda: MyRemovedInWarning, __name__)
+
+        message = (
+            '`housekeeping.tests.test_modules` is deprecated and will be '
+            'removed in My Product 1.0.'
+        )
+
+        with self.assertWarning(MyRemovedInWarning, message,
+                                '_import_module()'):
+            _import_module()
+
 
 class ModuleMovedTests(TestCase):
     """Unit tests for module_moved."""
@@ -106,6 +120,20 @@ class ModuleMovedTests(TestCase):
         message = (
             'Custom message: housekeeping.tests.test_modules; my.new.module; '
             'My Product; 1.0'
+        )
+
+        with self.assertWarning(MyRemovedInWarning, message,
+                                '_import_module()'):
+            _import_module()
+
+    def test_with_warning_cls_callable(self) -> None:
+        """Testing module_moved and warning_cls as callable"""
+        def _import_module():
+            module_moved(lambda: MyRemovedInWarning, __name__, 'my.new.module')
+
+        message = (
+            '`housekeeping.tests.test_modules` is deprecated and will be '
+            'removed in My Product 1.0. Import `my.new.module` instead.'
         )
 
         with self.assertWarning(MyRemovedInWarning, message,
